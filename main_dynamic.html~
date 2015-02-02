@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dildo-Generator dynamic DOM Loader</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+
+  <body>
+
+    <div id="#dildogenerator"></div>
+
+    <script langugaue="Javascript" type="text/javascript" src="dildogenerator.js"></script>
+    
+    <script language="Javascript">
+      window.onload = dildogenerator.init();
+    </script>
+    
+  </body>
+</html>

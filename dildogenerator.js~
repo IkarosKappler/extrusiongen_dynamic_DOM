@@ -1,0 +1,53 @@
+/**
+ * This is the new Dildo-Generator main script file.
+ *
+ * It is called before anything else happens in the dildo generator and
+ * it loads the whole dildo generator DOM structure using jQuery.
+ *
+ * If jQuery is not present it is tried to be loaded.
+ *
+ *
+ * @author  Ikaros Kappler
+ * @date    2015-02-02
+ * @version 1.0.0
+ **/
+
+var dildogenerator = {};
+dildogenerator.PATH_TO_JQUERY = "jquery-1.11.2.js";
+
+/**
+ * This function is the FIRST function to be called directly after the
+ * static (!) DOM is loaded from the HTML file.
+ **/
+dildogenerator.init = function() {
+    dildogenerator.checkJQuery();
+    dildogenerator.initDOM();
+}
+
+/**
+ * This function loads the jQuery library if it is not already present.
+ * The returned boolean indicates if jQuery was already loaded before.
+ **/
+dildogenerator.checkJQuery = function() {
+
+    if( !window.jQuery ) {
+	var jq  = document.createElement("script");
+	jq.type = "text/javascript";
+	// Path to jquery.js file, eg. Google hosted version
+	jq.src  = dildogenerator.PATH_TO_JQUERY;
+	document.getElementsByTagName("head")[0].appendChild(jq);
+
+	return false;
+    } else {
+	
+	return true;
+    }    
+}
+
+
+dildogenerator.initDOM = function() {
+    var dg_container = $("#dildogenerator_container");
+
+    dg_container.append( "<div>" ).text("DAS IST EIN TOLLER TEST" );
+    
+}
