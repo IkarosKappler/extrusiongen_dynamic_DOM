@@ -35,6 +35,7 @@ dildogenerator.jQueryInstalled = function() {
  **/
 dildogenerator.installJQuery = function( callback ) {
 
+    // Check if jQuery is already installed
     if( !dildogenerator.jQueryInstalled() ) {
 	var jq      = document.createElement("script");
 	jq.async    = true;
@@ -42,6 +43,7 @@ dildogenerator.installJQuery = function( callback ) {
 	jq.setAttribute( "type",     "text/javascript" );
 
 
+	// Wait for the jQuery library to be loaded
 	if( jq.readyState ) { //IE
             script.onreadystatechange = function () {
                 if( jq.readyState == "loaded" || jq.readyState == "complete" ) {
@@ -56,7 +58,7 @@ dildogenerator.installJQuery = function( callback ) {
         }
 
 	// Path to jquery.js file, eg. Google hosted version
-	jq.setAttribute( "src",      dildogenerator.PATH_TO_JQUERY );
+	jq.setAttribute( "src", dildogenerator.PATH_TO_JQUERY );
 	document.getElementsByTagName( "head" )[0].appendChild( jq );
 
 	return false;
@@ -67,7 +69,9 @@ dildogenerator.installJQuery = function( callback ) {
 }
 
 
-
+/**
+ * This function initializes the DOM structure using jQuery.
+ **/
 dildogenerator.initDOM = function() {
 
     if( !dildogenerator.jQueryInstalled() ) {
@@ -78,22 +82,32 @@ dildogenerator.initDOM = function() {
 
 
     var dg_container = $("#dildogenerator_container");
-    /*
-    var div = $( "<div/>",
-		 { 'class'    : 'yourclass',
-                     "id"       : "menu_bar",
-		     "style"    : "z-index: 1001",
-                   html       : 'DAS IST EIN TOLLER TEST'
-		 } 
-	       ); 
-    */
+
     
+    dildogenerator._initMenubarDOM( dg_container );
+
+};
+
+/**
+ * This (sub) function initializes the the menubar DOM structure.
+ **/
+dildogenerator._initMenubarDOM = function( dg_container ) {
     var menu_bar = $( "<div/>",
-		      { // 'class'    : 'yourclass',
-			  "id"       : "menu_bar",
+		      {   "id"       : "menu_bar",
 			  "style"    : "z-index: 1001"
 		      } 
 		    );
+    
+    dildogenerator._initMenubarDOM_model( menu_bar );
+    dildogenerator._initMenubarDOM_3Dprint( menu_bar );
+    dildogenerator._initMenubarDOM_help( menu_bar );
+    dg_container.append( menu_bar );
+};
+
+/**
+ * This (sub) function initializes the DOM structure for the 'Model' menu bar entry.
+ **/
+dildogenerator._initMenubarDOM_model = function( menu_bar ) {
 
     var menuList_model   = null;
     var menuItem_model   = $( "<div/>",
@@ -103,38 +117,36 @@ dildogenerator.initDOM = function() {
 					   "class" : "dropdown"
 					 } ).append( $( "<li/>",
 							{ "class"  : "heading" }
-						      ).append( $( "<a/>", { "href" : "#" } ).text( "MODEL" ) ).append( menuList_model = $("<ul/>") ) ) );
-    //var menuList_model  = $( "<ul/>" );
-    //menuItem_model.append( menuList_model );
+						      ).append( $( "<a/>", { "href" : "#" } ).text( _DILDOGEN_LANG.get(["menubar","model","_heading"],"Model") ) ).append( menuList_model = $("<ul/>") ) ) );
     
     
     // Populate 'Model->New' item
     menuList_model.append( $( "<li/>" ).append( $( "<a/>", { "href" : "#",
 										  "onclick": "newScene()",
-										  "html": "New" 
+										  "html": _DILDOGEN_LANG.get(["menubar","model","item_newFile"],"New") 
 							   } ) ) );
     if( typeof _DILDO_PRESETS != "undefined" )
-	dildogenerator.populate_dildo_presets_menu( _DILDO_PRESETS );
+	dildogenerator.populate_dildo_presets_menu( menuList_model, _DILDO_PRESETS );
     
-    if( true ) { //_DILDO_CONFIG && !_DILDO_CONFIG.HIDE_SAVE_FILE_ITEM ) {
+    if( typeof _DILDO_CONFIG != "undefined" && !_DILDO_CONFIG.HIDE_SAVE_FILE_ITEM ) {
 	// Populate 'Model->Save' item
 	menuList_model.append( $( "<li/>" ).
 				       append( $( "<a/>", { "href" : "#",
 										      "onclick": "exportZIP()",
-										      "html": "Save (*.zip)" +
+										      "html": _DILDOGEN_LANG.get(["menubar","model","item_saveFile"],"Save (*.zip)") +
 										               "<form name=\"zip_form\">\n" +
 										               "<input type=\"hidden\" name=\"compress_zip\" value=\"0\" />\n" +
 										               "</form>\n"
 							  } ) ) );
     }
 
-    if( true ) { //_DILDO_CONFIG && !_DILDO_CONFIG.HIDE_LOAD_FILE_ITEM ) {
+    if( typeof _DILDO_CONFIG != "undefined" && !_DILDO_CONFIG.HIDE_LOAD_FILE_ITEM ) {
 	// Populate 'Model->Load' item
 	menuList_model.append( $( "<li/>" ).
 				       append( $( "<form/>",
 						  { "name"   : "zip_import_form" } ).
 					       append( $( "<a/>", { "href" : "#", 
-								    "html" :  "Load (*.zip)" } )
+								    "html" :  _DILDOGEN_LANG.get(["menubar","model","item_loadFile"],"Load (*.zip)") } )
 						     ).
 					       append( $( "<div/>", { "class"   : "open_file_menu_div" } ).
 						       append( $( "</input>", { "type"     : "file",
@@ -148,20 +160,20 @@ dildogenerator.initDOM = function() {
 						    
     }
 
-    if( true ) { // _DILDO_CONFIG && !_DILDO_CONFIG.HIDE_EXPORT_MESH_MENU ) {
+    if( typeof _DILDO_CONFIG != "undefined" && !_DILDO_CONFIG.HIDE_EXPORT_MESH_MENU ) {
 	var export_menu = $( "<li/>" );
 	export_menu.append( $( "<a/>", { "href"  : "#",
 					 "class" : "popout",
-					 "html"  : "Export Mesh &gt;" } ) );
+					 "html"  : _DILDOGEN_LANG.get(["menubar","model","menu_exportMesh","_heading"],"Export Mesh &gt;") } ) );
 	export_menu.append( $( "<ul/>" ).
 			    append( $( "<li/>" ).
 				    append( $( "<a/>", { "href"    : "#",
 							 "onclick" : "exportSTL()",
-							 "html"    : "Surface Tesselation (*.stl)" } ) ) ).
+							 "html"    : _DILDOGEN_LANG.get(["menubar","model","menu_exportMesh","item_exportSTL"],"Surface Tesselation (*.stl)") } ) ) ).
 			    append( $( "<li/>" ).
 				    append( $( "<a/>", { "href"    : "#",
 							 "onclick" : "exportOBJ()",
-							 "html"    : "Wavefront File (*.obj)" } ) ) )
+							 "html"    : _DILDOGEN_LANG.get(["menubar","model","menu_exportMesh","item_exportOBJ"],"Wavefront File (*.obj)") } ) ) )
 			  );
 	
 	menuList_model.append( export_menu );
@@ -169,12 +181,12 @@ dildogenerator.initDOM = function() {
     }
 
     
-    if( true ) { // _DILDO_CONFIG && !_DILDO_CONFIG.HIDE_PUBLISH_MESH_MENU ) {
+    if( typeof _DILDO_CONFIG != "undefined" && !_DILDO_CONFIG.HIDE_PUBLISH_MESH_MENU ) {
 
 	menuList_model.append( $( "<li/>" ).
 			       append( $( "<a/>", { "href"    : "#",
 						    "onclick" : "publishDildoDesign()",
-						    "html"    : "Publish ..."
+						    "html"    : _DILDOGEN_LANG.get(["menubar","model","item_publish"],"Publish ...")
 						  } 
 					)
 				     )
@@ -188,7 +200,7 @@ dildogenerator.initDOM = function() {
     menuList_model.append( $( "<li/>" ).
 			   append( $( "<a/>", { "href"    : "#",
 						"onclick" : "saveShape();",
-						"html"    : "Export Shape (*.json)" }
+						"html"    : _DILDOGEN_LANG.get(["menubar","model","item_saveShape"],"Export Shape (*.json)") }
 				    )
 				 )
 			 );
@@ -196,7 +208,7 @@ dildogenerator.initDOM = function() {
     menuList_model.append( $( "<li/>" ).
 			   append( $( "<form/>", { "name"   : "bezier_file_upload_form" } ).
 				   append( $( "<a/>", { "href"  : "#",
-							"html"  : "Import Shape (*.json)" } ) 
+							"html"  : _DILDOGEN_LANG.get(["menubar","model","item_loadShape"],"Import Shape (*.json)") } ) 
 					 ).
 				   append( $( "<div/>", { "class" : "open_file_menu_div" } ).
 					   append( $( "<input/>",  { "type"     : "file",
@@ -214,11 +226,126 @@ dildogenerator.initDOM = function() {
 
 
     menu_bar.append( menuItem_model );
-    dg_container.append( menu_bar );
 							    
 };
 
-dildogenerator.populate_dildo_presets_menu = function( _presets ) {
-    // ...
-    // TODO
+/**
+ * This (sub) function initializes the DOM structure for the '3D Print' menu bar entry.
+ **/
+dildogenerator._initMenubarDOM_3Dprint = function( menu_bar ) {
+
+    var menuList_3dprint   = null;
+    var menuItem_3dprint   = $( "<div/>",
+				{ "id"      : "dropdown-holder" } 
+			      ).append( $( "<ul/>",
+					   { "id"    : "nav",
+					     "class" : "dropdown"
+					   } ).append( $( "<li/>",
+							  { "class"  : "heading" }
+							).append( $( "<a/>", { "href" : "#" } ).text( _DILDOGEN_LANG.get(["menubar","3dprint","_heading"],"3D PRINT") ) ).append( menuList_3dprint = $("<ul/>") ) ) );
+
+    // Populate '3D Print->Order Print...' item
+    menuList_3dprint.append( $( "<li/>" ).append( $( "<a/>", { "href" : "#",
+							       "onclick": _DILDO_CONFIG.ORDER_PRINT_ACTION,
+							       "html": _DILDOGEN_LANG.get(["menubar","3dprint","item_orderPrint"],"ORDER PRINT") 
+							     } ) ) );
+
+
+    menu_bar.append( menuItem_3dprint );
+};
+
+/**
+ * This (sub) function initializes the DOM structure for the 'Help' menu bar entry.
+ **/
+dildogenerator._initMenubarDOM_help = function( menu_bar ) {
+
+    var menuList_help   = null;
+    var menuItem_help   = $( "<div/>",
+			     { "id"      : "dropdown-holder" } 
+			   ).append( $( "<ul/>",
+					{ "id"    : "nav",
+					  "class" : "dropdown"
+					} ).append( $( "<li/>",
+						       { "class"  : "heading" }
+						     ).append( $( "<a/>", { "href" : "#" } ).text( _DILDOGEN_LANG.get(["menubar","help","_heading"],"HELP") ) ).append( menuList_help = $("<ul/>") ) ) );
+
+    
+    // Populate 'Interface' sub menu
+    var interface_menu = $( "<li/>" );
+    interface_menu.append( $( "<a/>", { "href"  : "#",
+				     "class" : "popout",
+				     "html"  : _DILDOGEN_LANG.get(["menubar","help","menu_interface","_heading"],"INTERFACE") } ) );
+    interface_menu.append( $( "<ul/>" ).
+			append( $( "<li/>" ).
+				append( $( "<a/>", { "href"    : "#",
+						     "onclick" : "exportSTL()",
+						     "html"    : _DILDOGEN_LANG.get(["menubar","help","menu_interface","item_decreaseGUISize"],"SMALLER (-10%)") } ) ) ).
+			append( $( "<li/>" ).
+				append( $( "<a/>", { "href"    : "#",
+						     "onclick" : "exportOBJ()",
+						     "html"    : _DILDOGEN_LANG.get(["menubar","help","menu_interface","item_increaseGUISize"],"BIGGER (+10%)") } ) ) )
+		      );
+    
+    menuList_help.append( interface_menu );
+
+    
+    // Populate the items ...
+    menuList_help.append( $( "<li/>" ).append( $( "<a/>", { "href" : "#",
+							       "onclick": "open_faqs()",
+							       "html": _DILDOGEN_LANG.get(["menubar","help","item_faq"],"FAQ") 
+							  } ) ) );
+    menuList_help.append( $( "<li/>" ).append( $( "<a/>", { "href" : "#",
+							    "onclick": "open_faqs('general_publish')",
+							    "html": _DILDOGEN_LANG.get(["menubar","help","item_howtoPublish"],"HOW TO PUBLISH?") 
+							  } ) ) );
+    menuList_help.append( $( "<li/>" ).append( $( "<a/>", { "href" : "http://www.dildo-generator.com/resources/Dildo_Slides_re-publica_20140507.pdf",
+							    //"onclick": "",
+							    target:  "_blank",
+							    "html": _DILDOGEN_LANG.get(["menubar","help","item_makingADildoPDF"],"MAKING A DILDO (PDF)") 
+							  } ) ) );
+    menuList_help.append( $( "<li/>" ).append( $( "<a/>", { "href" : "#",
+							    "onclick": "display_bezier_string()",
+							    "html": _DILDOGEN_LANG.get(["menubar","help","item_displayBezierString"],"DISPLAY BEZIER STRING") 
+							  } ) ) );
+    menuList_help.append( $( "<li/>" ).append( $( "<a/>", { "href" : "#",
+							    "onclick": "show_bezier_input_dialog()",
+							    "html": _DILDOGEN_LANG.get(["menubar","help","item_showBezierInputDialog"],"PASTE BEZIER STRING ...") 
+							  } ) ) );
+    menuList_help.append( $( "<li/>" ).append( $( "<a/>", { "href" : "#",
+							    "onclick": "about()",
+							    "html": _DILDOGEN_LANG.get(["menubar","help","item_about"],"ABOUT") 
+							  } ) ) );
+
+
+    menu_bar.append( menuItem_help );
+};
+
+/**
+ * This function populates the presets sub menu and appends it to the passed 
+ * menuList (<ul>) jQuery item.
+ **/
+dildogenerator.populate_dildo_presets_menu = function( menuList, presets ) {
+
+    for( var category_name in presets ) {
+	
+	var category    = presets[ category_name ];
+
+	var submenuList = null;
+	menuList.append( $( "<li/>" ).append( $( "<a/>", { "class"  : "popout",
+							   "href"   : "#",
+							   "html"   : "Presets &gt;"
+							 } ) ) ).append( submenuList = $("<ul/>") );
+	
+	
+	for( var i in category.elements ) {
+
+	    var preset      = category.elements[i];
+	    //document.write( "<li><a href=\"#\" onclick=\"setBezierPathFromJSON(_DILDO_PRESETS." + category_name + ".elements[" + i + "].bezier_json,_DILDO_PRESETS." + category_name + ".elements[" + i + "].bend_angle);\">" + preset.label + "</a></li>\n" );
+	    submenuList.append( $( "<li/>" ).append( $( "<a/>", { "href"    : "#",
+								  "html"    : preset.label,
+								  "onclick" : "setBezierPathFromJSON(_DILDO_PRESETS." + category_name + ".elements[" + i + "].bezier_json,_DILDO_PRESETS." + category_name + ".elements[" + i + "].bend_angle);"
+								} ) ) );
+	    
+	}	
+    }
 };
