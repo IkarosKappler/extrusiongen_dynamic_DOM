@@ -7,7 +7,9 @@
  **/
 
 var _DILDOGEN_LANG = {
-    "global":  {},
+    "global":  { link_gallery   : "Gallery",
+		 button_publish : "Publish ..."
+	       },
     "menubar": { "model":   { _heading:        "Model",
 			      item_newFile:    "New",
 			      menu_presets:    { _heading: "Presets &gt;" },

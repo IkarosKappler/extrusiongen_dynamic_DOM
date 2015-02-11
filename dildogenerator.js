@@ -86,7 +86,8 @@ dildogenerator.initDOM = function() {
 
     var dg_container = $("#dildogenerator_container");
 
-    
+    dildogenerator._initVersionTagDOM( dg_container );
+    dildogenerator._initGalleryLinkDOM( dg_container );
     dildogenerator._initMenubarDOM( dg_container );
     dildogenerator._initMeshControlsDOM( dg_container );
     dildogenerator._initPrintControlsDOM( dg_container );
@@ -94,11 +95,64 @@ dildogenerator.initDOM = function() {
     dildogenerator._initColorSettingsDOM( dg_container );
     dildogenerator._initRegisterHeadersDOM( dg_container );
     dildogenerator._initInformationalDOM( dg_container );
+    dildogenerator._initLicenseDOM( dg_container );
     dildogenerator._initStatusbarDOM( dg_container );
+
+    dildogenerator._initCanvasComponentsDOM( dg_container );
 };
 
 /**
- * This (sub) function initializes the the menubar DOM structure.
+ * This (sub) function initializes the version tag DOM structure.
+ **/
+dildogenerator._initVersionTagDOM = function( dg_container ) {
+    var version_tag = $( "<div/>",
+			 { "id"  : "version_tag" } 
+		       ).text( VERSION_STRING );
+    dg_container.append( version_tag );
+};
+
+
+/**
+ * This (sub) function initializes the gallery link and publish button DOM structure.
+ **/
+dildogenerator._initGalleryLinkDOM = function( dg_container ) {
+    var gallery_links = $( "<div/>",
+			 { "id"  : "gallery_links" } 
+		       );
+    gallery_links.append( $( "<a/>",
+			     { "href"   : "gallery/",
+			       "target" : "_blank"
+			       //"html"   : "Gallery"
+			     } 
+			   ).append( $( "<img />",
+					{ "src"    : "img/Icon_Gallery_A.png",
+					  "width"  : "24",
+					  "height" : "23",
+					  "alt"    : "To the gallery",
+					  "align"  : "middle" 
+					}
+				      )
+				   ).append( $( "<span/>", { "html" : _DILDOGEN_LANG.get(["global","link_gallery"],"Gallery")
+							   }
+					      ) 
+					   )
+			);
+    if( typeof _DILDO_CONFIG != "undefined" && !_DILDO_CONFIG.HIDE_PUBLISH_MESH_MENU ) {
+	gallery_links.append( $("<span/>").
+			      text("| ").
+			      append( $( "<button/>",
+					 { "onclick" : "publishDildoDesign()" }
+				       ).text( _DILDOGEN_LANG.get(["global","button_publish"],"Publish ...") )
+				    )
+			    );
+    }
+
+    dg_container.append( gallery_links );
+};
+
+
+/**
+ * This (sub) function initializes the menubar DOM structure.
  **/
 dildogenerator._initMenubarDOM = function( dg_container ) {
     var menu_bar_holder = null; 
@@ -554,6 +608,212 @@ dildogenerator._initInformationalDOM = function( dg_container ) {
 				   "The actual weight depends on the material you use."
 				 )
 			);
-    dg_container.append( informational );
-						
+    dg_container.append( informational );						
+};
+
+
+/**
+ * This (sub) function initializes the license info DOM structure (size, volume and weight).
+ **/
+dildogenerator._initLicenseDOM = function( dg_container ) {
+
+    var license_info = $( "<div/>",
+			  { "id"    : "license",
+			    "style" : "left: 1044px; top: 620px;" 
+			  }
+			);
+    license_info.append( $( "<br/>" ) );
+    license_info.append( $( "<a/>",
+			    { "href"   : "https://github.com/IkarosKappler/extrusiongen.git",
+			      "target" : "_blank",
+			      "style"  : "text-decoration: none;"
+			    } 
+			  ).append( $( "<img/>",
+				       { "src"     : "img/GitHub.png",
+					 "width"   : 32,
+					 "height"  : 32,
+					 "alt"     : "Clone at Github.com",
+					 "style"   : "border: 0;"
+				       }
+				     )
+				  ) 
+		       );
+    license_info.append( $( "<a/>",
+			    { "href"   : "mailto:info@dildo-generator.com",
+			      "target" : "_blank",
+			      "style"  : "text-decoration: none;"
+			    } 
+			  ).append( $( "<img/>",
+				       { "src"     : "img/Email.png",
+					 "width"   : 32,
+					 "height"  : 32,
+					 "alt"     : "Send Bug reports to info@dildo-generator.com",
+					 "style"   : "border: 0;"
+				       }
+				     )
+				  ) 
+		       );
+     license_info.append( $( "<a/>",
+			    { "href"   : "http://twitter.com/dildogenerator",
+			      "target" : "_blank",
+			      "style"  : "text-decoration: none;"
+			    } 
+			  ).append( $( "<img/>",
+				       { "src"     : "img/Twitter.png",
+					 "width"   : 32,
+					 "height"  : 32,
+					 "alt"     : "Follow us on Twitter at #dildogenerator",
+					 "style"   : "border: 0;"
+				       }
+				     )
+				  ) 
+		       );
+     license_info.append( $( "<a/>",
+			    { "href"   : "https://www.flickr.com/photos/dildo-generator/",
+			      "target" : "_blank",
+			      "style"  : "text-decoration: none;"
+			    } 
+			  ).append( $( "<img/>",
+				       { "src"     : "img/Flickr.png",
+					 "width"   : 32,
+					 "height"  : 32,
+					 "alt"     : "Find screenshots and photos of dildo making at flickr",
+					 "style"   : "border: 0;"
+				       }
+				     )
+				  ) 
+		       );
+     license_info.append( $( "<a/>",
+			    { "href"   : "http://dildo-generator.spreadshirt.de",
+			      "target" : "_blank",
+			      "style"  : "text-decoration: none;"
+			    } 
+			  ).append( $( "<img/>",
+				       { "src"     : "img/Spreadshirt.png",
+					 "width"   : 32,
+					 "height"  : 32,
+					 "alt"     : "Order a fan shirt",
+					 "style"   : "border: 0;"
+				       }
+				     )
+				  ) 
+			);
+
+    license_info.append( $( "<br/>" ) );
+    license_info.append( $( "<br/>" ) );
+
+    license_info.append( $( "<img/>",
+		       { "src"    : "img/cc.large.32.png",
+			 "alt"    : "Creative Commons CC",
+			 "width"  : 32,
+			 "height" : 32
+		       }
+		     )
+		  );
+    license_info.append( $( "<img/>",
+		       { "src"    : "img/by.large.32.png",
+			 "alt"    : "Creative Commons BY",
+			 "width"  : 32,
+			 "height" : 32
+		       }
+		     )
+		  );
+    license_info.append( $( "<img/>",
+		       { "src"    : "img/nc.large.32.png",
+			 "alt"    : "Creative Commons NC",
+			 "width"  : 32,
+			 "height" : 32
+		       }
+		     )
+		  );
+    license_info.append( $( "<img/>",
+		       { "src"    : "img/sa.large.32.png",
+			 "alt"    : "Creative Commons SA",
+			 "width"  : 32,
+			 "height" : 32
+		       }
+		     )
+		  );
+    license_info.append( $( "<br/>" ) );
+
+    license_info.append( $( "<span/>" ).text( "Creative Commons / BY-NC-SA" ) ).append( $( "<br/>" ) );
+    license_info.append( $( "<br/>" ) );
+			    
+    if( isDildoGeneratorDomain() ) {
+	license_info.append( $( "<span/>" ).text( "[" ) ).
+	    append( $( "<a/>",
+		       { "href"    : "#",
+			 "onclick" : "order_print()",
+			 "style"   : "color: #ef0000; font-size: 8pt;"
+		       }
+		     ).text( "Don't have a 3D printer?" )
+		  ).
+	    append( $( "<span/>" ).text( "]" ) );
+			 
+    }
+
+    dg_container.append( license_info );						
+};
+
+
+/**
+ * This (sub) function initializes the informational box DOM structure (size, volume and weight).
+ **/
+dildogenerator._initCanvasComponentsDOM = function( dg_container ) {
+
+    dildogenerator._initCanvasComponentDOMwith( dg_container,
+						"preview_canvas",
+						10,
+						45,
+						_DILDO_CONFIG.PREVIEW_CANVAS_WIDTH,
+						_DILDO_CONFIG.PREVIEW_CANVAS_HEIGHT,
+						"Click, hold and drag to rotate the view.",
+						"setStatus('Click, hold and drag to rotate the view.');",
+						"setStatus('');",
+						"preview_canvas_div"
+					      ); 
+    dildogenerator._initCanvasComponentDOMwith( dg_container,
+						"bezier_canvas",
+						10 + _DILDO_CONFIG.PREVIEW_CANVAS_WIDTH + 10,
+						45,
+						_DILDO_CONFIG.BEZIER_CANVAS_WIDTH,
+						_DILDO_CONFIG.BEZIER_CANVAS_HEIGHT,
+						"Double click onto the curve to add new control points. Press the [DEL] key to delete selected points.",
+						"setStatus('Double click onto the curve to add new control points. Press the [DEL] key to delete selected points.');",
+						"setStatus('');",
+						"bezier_canvas_div"
+					      );   			
+};
+
+dildogenerator._initCanvasComponentDOMwith = function( dg_container,
+						       id,
+						       left_px,
+						       top_px,
+						       width_px,
+						       height_px,
+						       title,
+						       mouseover,
+						       mouseout,
+						       div_id
+				   ) {
+    var canvas = $( "<div/>",
+		    { "id" : div_id }
+		  ).append( $( "<canvas/>",
+			       { "id"        : id,
+				 //"top"       : top_px,
+				 //"left"      : left_px,
+				 "width"     : width_px,
+				 "height"    : height_px,
+				 "title"     : title,
+				 "class"     : "tooltip",
+				 "mouseover" : mouseover,
+				 "mouseout"  : mouseout,
+				 "style"     : "width: " + width_px + "px; " +
+				               "height: " + height_px + "px; " +
+				               "top: " + top_px + "px; " +
+				               "left: " + left_px + "px;"
+			       }
+			     )
+			  );
+    dg_container.append( canvas );
 };

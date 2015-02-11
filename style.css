@@ -257,22 +257,23 @@ tooltip:hover:before{
 }
 
 #version_tag {
-    position:   absolute;
-    top:        30px;
+    position:            absolute;
+    top:                 300px;
     /* DEPRECATED: these settings are deployed dynamically since version 0.3.17 */
     /* text-align: right; */
     /* left:       10px; */
-    width:      512px;
-    font-size:  7pt;
+    width:               512px;
+    font-size:           7pt;
+    left:                1228px;
 
     /* Thank you to Robert K for the post at
      * http://stackoverflow.com/questions/1080792/how-can-i-draw-vertical-text-with-css-cross-browser
      **/ 
-    -webkit-transform: rotate(90deg);
-    -moz-transform: rotate(90deg);
-    -ms-transform: rotate(90deg);
-    -o-transform: rotate(90deg);
-    transform: rotate(90deg);
+    -webkit-transform:   rotate(90deg);
+    -moz-transform:      rotate(90deg);
+    -ms-transform:       rotate(90deg);
+    -o-transform:        rotate(90deg);
+    transform:           rotate(90deg);
 
     /* also accepts left, right, top, bottom coordinates; not required, but a good idea for styling */
     /*-webkit-transform-origin: 50% 50%;
@@ -290,8 +291,10 @@ tooltip:hover:before{
 #gallery_links {
     position:   absolute;
     top:        10px;
+
     /* DEPRECATED: these settings are deployed dynamically since version 0.3.17 */
-    /* left:       532px; */
+    left:       532px;
+
     width:      512px;
     text-align: center;
     /* font-size:  pt; */
