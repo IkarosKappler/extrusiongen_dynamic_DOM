@@ -462,17 +462,71 @@ dildogenerator._initMeshControlsDOM = function( dg_container ) {
 			    
 			} 
 		      );
-    mesh_controls.append( $( "<div/>",
-			     { "class" : "register_card",
+    var mesh_controls_div = null;
+    var table             = null;
+    mesh_controls.append( mesh_controls_div =
+			  $( "<div/>",
+			     { "class" : "register_card grid_container outline",
 			       "id"    : "mesh_controls" 
-			     } ).append( $( "<h3/>").text( _DILDOGEN_LANG.get(["register_card","mesh_controls","_heading"],"Mesh controls") ) ).
-			  append( $( "<table/>",
+			     } ).append( $( "<h3/>").text( _DILDOGEN_LANG.get(["register_card","mesh_controls","_heading"],"Mesh controls") ) )
+			  /*.append( table =
+				  $( "<table/>",
 				     { "style"  : "border: 0;" }
 				   ) 
-				)
+				)*/
 				  
 			);
-    // TODO
+    /* I don't use tables here any more.                                   */
+    /* Arranging non-tabular contents with tables is Meh.                  */
+    /* Used a 6-column grid system instead. See sixColumnGridSystem.css    */
+    /* instead.                                                            */
+
+    /* Create row 1: bend */
+    var row1 = mesh_controls_div.append( $( "<div/>",
+					    { "class" : "row" }
+					  )
+					 );
+    row1.append( $( "<div/>",
+		    { "class" : "col-1",
+		      "html"  : "Bend (<span id=\"preview_bend_display\">0</span>°)" 
+		    }
+		  )
+	       );
+    row1.append( $( "<div/>",
+		    { "class" : "col-2",
+		      "html"  : "0°<input type=\"range\" id=\"preview_bend\" name=\"preview_bend\" min=\"0\" max=\"180\" value=\"0\" " +
+                                "style=\"width: 150px; margin-top: -12px;\" " +
+		                "onmousedown=\"preview_bend_mousedown=true;\" " +
+		                "onmouseup=\"preview_bend_mousedown=false;\" " +
+		                "onmousemove=\"if(preview_bend_mousedown) document.getElementById('preview_bend_display').innerHTML=document.getElementById('preview_bend').value;\" " +
+		                "onchange=\"displayBendingValue(); preview_rebuild_model();\" />180°"
+		    }
+		  ).append( $( "<script/>", 
+			       { "html"  : "preview_bend_mousedown = false;" }
+			     )
+			  )
+	       );
+    /* Create row 2: shape style */
+    var row2 = mesh_controls_div.append( $( "<div/>",
+					    { "class" : "row" }
+					  )
+					 );
+     row2.append( $( "<div/>",
+		    { "class" : "col-1",
+		      "html"  : "Shape Style:" 
+		    }
+		  )
+	       );
+     row1.append( $( "<div/>",
+		    { "class" : "col-2",
+		      "html"  : "<input type=\"radio\" name=\"shape_style\" id=\"shape_style_circle\" value=\"circle\" checked=\"checked\" onchange=\"preview_rebuild_model();\" /> <label for=\"shape_style_circle\">Circle</label> " +
+		                "<input type=\"radio\" name=\"shape_style\" id=\"shape_style_oval\" value=\"oval\" onchange=\"preview_rebuild_model();\" /> <label for=\"shape_style_oval\">Oval</label> " +
+	                        "<br/> "+
+	                        "<input type=\"radio\" name=\"shape_style\" id=\"shape_style_square\" value=\"square\" onchange=\"preview_rebuild_model();\" disabled=\"disabled\" /> <label for=\"shape_style_square\" class=\"disabled\">Square</label> " +
+	                        "<input type=\"radio\" name=\"shape_style\" id=\"shape_style_triangle\" value=\"triangle\" onchange=\"preview_rebuild_model();\" disabled=\"disabled\" /> <label for=\"shape_style_triangle\" class=\"disabled\">Triangle</label>"
+		    }
+		  )
+	       );
     
     dg_container.append( mesh_controls );
 };
@@ -482,18 +536,303 @@ dildogenerator._initMeshControlsDOM = function( dg_container ) {
  * This (sub) function initializes the mesh controls DOM structure.
  **/
 dildogenerator._initPrintControlsDOM = function( dg_container ) {
-    var print_controls = $( "<div/>",
-			     { "class" : "register_card",
-			       "id"    : "print_controls",
-			       "style" : "display: none;"
-			     } ).append( $( "<h3/>").text( _DILDOGEN_LANG.get(["register_card","print_controls","_heading"],"Advanced controls") ) ).
-			  append( $( "<table/>",
-				     { "style"  : "border: 0;" }
-				   ) 
-				);
-    // TODO
+    var print_controls_div = $( "<div/>",
+				{ "class" : "register_card", //  grid_container", // outline",
+				  "id"    : "print_controls",
+				  "style" : "display: none;"
+				} ).append( $( "<h3/>").text( _DILDOGEN_LANG.get(["register_card","print_controls","_heading"],"Advanced controls") ) ).
+	append( $( "<table/>",
+		   { "style"  : "border: 0;" }
+		 ) 
+	      );
+
+
+    /* Create row 1: segments */
+    var row1 = print_controls_div.append( $( "<div/>",
+					    { "class" : "row" }
+					  ) );
+    row1.append( $( "<div/>",
+		    { "class" : "col-1",
+		      "html"  : "Segments:" 
+		    }
+		  )
+	       );
+    row1.append( $( "<div/>",
+		    { "class" : "col-2",
+		      "html"  : "<table style=\"padding: 0px; spacing: 0px; border: 0; width: 100%;\"> "+
+	    "<tr> "+
+	    "  <td style=\"align: left; vertical-align: top;\"> "+
+	    "	<input type=\"number\" id=\"shape_segments\" name=\"shape_segments\" value=\"80\" class=\"tooltip\" title=\"The number of vertices on the vertical shape (on the circle). More vertices make the mesh more accurate but it renders slower.\" style=\"width: 45px;\" /> "+
+	    "	<label for=\"shape_segments\">Shape</label> "+
+	    "	<br/> "+
+	    "	<input type=\"number\" id=\"path_segments\" name=\"path_segments\" value=\"80\" class=\"tooltip\" title=\"The number of vertices on the horizontal shape (on the outer path). More vertices make the mesh more accurate but it renders slower.\" style=\"width: 45px;\" /> "+
+	    "	<label for=\"path_segments\">Path</label> "+
+	    " </td> " +
+	    "  " +
+	    "  <td style=\"vertical-align: middle;\" rowspan=\"2\"> "+
+	    "	<input type=\"button\" onclick=\"increase_mesh_details()\" value=\"+\" /> "+
+	    "  </td> " +
+	    "  <td style=\"vertical-align: middle;\"> " +
+	    "	<input type=\"button\" onclick=\"decrease_mesh_details()\" value=\"-\" /> "+
+	    "  </td> " +
+	    "</tr> " +
+	    "</table>"	  
+		    }
+		  )
+	       );
     
-    dg_container.append( print_controls );
+    /* Create row 2: Hollow */
+    var row2 = print_controls_div.append( $( "<div/>",
+					    { "class" : "row" }
+					  ) );
+    row2.append( $( "<div/>",
+		    { "class" : "col-1",
+		      "html"  : "&nbsp;" 
+		    }
+		  )
+	       );
+    
+    row2.append( $( "<div/>",
+		    { "class" : "col-2",
+		      "html"  : "<input type=\"checkbox\" id=\"build_negative_mesh\" name=\"build_negative_mesh\" class=\"tooltip\" title=\"Set this value if you want to have a hollow shape to be generated. The strength of the hollow hull is specified by the 'Mesh Hull Strength' setting.\" onchange=\"document.getElementById('mesh_hull_strength').disabled=(document.getElementById('build_negative_mesh').checked?'':'disabled'); preview_rebuild_model();\"/> " +
+          "<label for=\"build_negative_mesh\">Hollow</label>"	  
+		    }
+		  )
+	       );
+
+    /* Create row 3: Mesh Hull Strength */
+    var row3 = print_controls_div.append( $( "<div/>",
+					    { "class" : "row" }
+					  ) );
+    row3.append( $( "<div/>",
+		    { "class" : "col-1",
+		      "html"  : "Hull:" 
+		    }
+		  )
+	       );
+    
+    row3.append( $( "<div/>",
+		    { "class" : "col-2",
+		      "html"  : "<input type=\"number\" id=\"mesh_hull_strength\" name=\"mesh_hull_strength\" value=\"6\" class=\"tooltip\" title=\"...\" onkeyup=\"bezierCanvasHandler.redraw();preview_rebuild_model();\" style=\"width: 35px;\" onchange=\"if( typeof preview_rebuild_model != 'undefined' ) preview_rebuild_model();\" disabled=\"disabled\" />mm"	  
+		    }
+		  )
+	       );
+
+    /* Create row 4: Close path at */
+    var row4 = print_controls_div.append( $( "<div/>",
+					    { "class" : "row" }
+					  ) );
+    row4.append( $( "<div/>",
+		    { "class" : "col-1",
+		      "html"  : "Close path at" 
+		    }
+		  )
+	       );
+    
+    row4.append( $( "<div/>",
+		    { "class" : "col-2",
+		      "html"  : "<table style=\"padding: 0px; spacing: 0px; border: 0; width: 100%;\"> "+
+	"    <tr><td style=\"align: left;\"> " +
+	"	<input type=\"checkbox\" id=\"mesh_close_path_begin\" name=\"mesh_close_path_begin\" onchange=\"preview_rebuild_model();\" class=\"tooltip\" title=\"The path begin is the top of the mesh. In some cases the top bezier point is not located at the right bound. The top shape can be closed with this option then.\" /> " +
+	"	<label for=\"mesh_close_path_begin\">begin</label> " +
+	"      </td> " +
+        "      <td style=\"align: right;\"> " +
+	"	<input type=\"checkbox\" id=\"mesh_close_path_end\" name=\"mesh_close_path_end\" onchange=\"preview_rebuild_model();\" class=\"tooltip\" title=\"The path end is the bottom of the mesh.\" checked=\"checked\" />" +
+	"	<label for=\"mesh_close_path_end\">end</label>" +
+	"    </td></tr>" +
+	"  </table>"
+		    }
+		  )
+	       );
+    /* Create row 5: Wireframe */
+    var row5 = print_controls_div.append( $( "<div/>",
+					    { "class" : "row" }
+					  ) );
+    row5.append( $( "<div/>",
+		    { "class" : "col-1",
+		      "html"  : "&nbsp;" 
+		    }
+		  )
+	       );
+    
+    row5.append( $( "<div/>",
+		    { "class" : "col-2",
+		      "html"  : "<input type=\"checkbox\" id=\"wireframe\" name=\"wireframe\" onchange=\"preview_rebuild_model();\" class=\"tooltip\" title=\"Well, just toggles wireframe on/off.\" />" +
+          "<label for=\"wireframe\">Wireframe</label>"
+		    }
+		  )
+	       );
+
+    /* Create row 6: Triangulate */
+    var row6 = print_controls_div.append( $( "<div/>",
+					    { "class" : "row" }
+					  ) );
+    row6.append( $( "<div/>",
+		    { "class" : "col-1",
+		      "html"  : "&nbsp;" 
+		    }
+		  )
+	       );
+    
+    row6.append( $( "<div/>",
+		    { "class" : "col-2",
+		      "html"  : "<input type=\"checkbox\" id=\"triangulate\" name=\"triangulate\" onchange=\"preview_rebuild_model();\" />" +
+		                "<label for=\"wireframe\">Triangulate</label>" +
+		                "<span class=\"tooltip\" title=\"Note: quad faces render faster but only triangulated meshes are STL compatible!\">(!)</span>"
+		    }
+		  )
+	       );
+    /* Create row 7: Split shape/mesh */
+    var row7 = print_controls_div.append( $( "<div/>",
+					    { "class" : "row" }
+					  ) );
+    row7.append( $( "<div/>",
+		    { "class" : "col-1",
+		      "html"  : "&nbsp;" 
+		    }
+		  )
+	       );
+    
+    row7.append( $( "<div/>",
+		    { "class" : "col-2",
+		      "html"  : "<input type=\"checkbox\" id=\"split_shape\" name=\"split_shape\" onchange=\"toggleFormElementsEnabled(); preview_rebuild_model();\" />" +
+		                "<label for=\"split_shape\">Split into halves</label>"
+		    }
+		  )
+	       );
+
+    /* Create row 8: Parts */
+    var row8 = print_controls_div.append( $( "<div/>",
+					    { "class" : "row" }
+					  ) );
+    row8.append( $( "<div/>",
+		    { "class" : "col-1",
+		      "html"  : "Parts:" 
+		    }
+		  )
+	       );
+    
+    row8.append( $( "<div/>",
+		    { "class" : "col-2",
+		      "html"  : "<div class=\"indent_1\">" + 
+	"    <table style=\"border: 0;\">" + 
+	"      <tr>" + 
+	"	<td>" + 
+	"	  <input type=\"radio\" id=\"parts_both\" name=\"parts\" onchange=\"preview_rebuild_model();\" value=\"both\" checked=\"checked\" disabled=\"disabled\" />" + 
+	"	  <label for=\"parts_both\">Both</label>" + 
+	"	</td>" + 
+	"	<td>" + 
+	"	  <input type=\"radio\" id=\"parts_left\" name=\"parts\" onchange=\"preview_rebuild_model();\" value=\"left\" disabled=\"disabled\" />" + 
+	"	  <label for=\"parts_left\">Left</label>" + 
+	"	</td>" + 
+	"	<td>" + 
+	"	  <input type=\"radio\" id=\"parts_right\" name=\"parts\" onchange=\"preview_rebuild_model();\" value=\"right\" disabled=\"disabled\" />" + 
+	"	  <label for=\"parts_right\">Right</label>" + 
+	"	</td>" + 
+	"      </tr>" + 
+	"    </table>" + 
+	"  </div>"
+		    }
+		  )
+	       );
+
+    /* Create row 9: Arrange splits on plance */
+    var row9 = print_controls_div.append( $( "<div/>",
+					    { "class" : "row" }
+					  ) );
+    row9.append( $( "<div/>",
+		    { "class" : "col-1",
+		      "html"  : "&nbsp;" 
+		    }
+		  )
+	       );
+    
+    row9.append( $( "<div/>",
+		    { "class" : "col-2",
+		      "html"  :  "<div class=\"indent_1\">" +
+          "  <input type=\"checkbox\" id=\"arrange_splits_on_plane\" name=\"arrange_splits_on_plane\" onchange=\"toggleFormElementsEnabled(); preview_rebuild_model();\" disabled=\"disabled\" />" +
+          "  <label for=\"arrange_splits_on_plane\">Arrange splits on plane</label>" +
+	  "</div>"
+		    }
+		  )
+	       );
+
+    /* Create row 10: Directions */
+    var row10 = print_controls_div.append( $( "<div/>",
+					    { "class" : "row" }
+					  ) );
+    row10.append( $( "<div/>",
+		    { "class" : "col-1",
+		      "html"  : "Directions:" 
+		    }
+		  )
+	       );
+    
+    row10.append( $( "<div/>",
+		    { "class" : "col-2",
+		      "html"  :  "<div class=\"indent_2\">" +
+	"    <table style=\"border: 0;\">" +
+	"      <tr>" +
+	"	<td>" +
+	"	  <input type=\"radio\" id=\"directions_xyz\" name=\"directions\" onchange=\"preview_rebuild_model();\" value=\"xyz\" checked=\"checked\" disabled=\"disabled\" />" +
+	"	  <label for=\"directions_xyz\">(x,y,z)</label>" +
+	"	</td>" +
+	"	<td>" +
+	"	  <input type=\"radio\" id=\"directions_yxz\" name=\"directions\" onchange=\"preview_rebuild_model();\" value=\"zxy\" disabled=\"disabled\" />" +
+	"	  <label for=\"directions_yxz\">(-z,x,-y)</label>" +
+	"	</td>" +
+	"      </tr>" +
+	"    </table>" +
+	"  </div>"
+		    }
+		  )
+	       );
+
+
+    /* Create row 11: Directions */
+    var row10 = print_controls_div.append( $( "<div/>",
+					    { "class" : "row" }
+					  ) );
+    row10.append( $( "<div/>",
+		    { "class" : "col-1",
+		      "html"  : "Base type:" 
+		    }
+		  )
+	       );
+    
+    row10.append( $( "<div/>",
+		    { "class" : "col-2",
+		      "html"  : "<div class=\"indent_2\">" +
+	"    <input type=\"radio\" name=\"mesh_hull_type\" id=\"mesh_hull_perpendicular\" value=\"perpendicular\" checked=\"checked\" disabled=\"disabled\" onchange=\"preview_rebuild_model();\" />" +
+	"    <label for=\"mesh_hull_perpendicular\">Perpendicular</label>" +
+	"    <input type=\"radio\" name=\"mesh_hull_type\" id=\"mesh_hull_prism\" value=\"prism\" disabled=\"disabled\" onchange=\"preview_rebuild_model();\" />" +
+	"    <label for=\"mesh_hull_prism\">Prism</label>" +
+	"  </div>"
+		    }
+		  )
+	       );
+
+
+    /* Final row: Build! button */
+    var rowBuild = print_controls_div.append( $( "<div/>",
+					    { "class" : "row" }
+					  ) );
+    rowBuild.append( $( "<div/>",
+		    { "class" : "col-1",
+		      "html"  : "&nbsp;" 
+		    }
+		  )
+	       );
+    
+    rowBuild.append( $( "<div/>",
+		    { "class" : "col-2",
+		      "html"  : "<input type=\"button\" value=\"Rebuild\" onclick=\"preview_rebuild_model();\">"
+		    }
+		  )
+	       );
+
+    
+    dg_container.append( print_controls_div );
 };
 
 
@@ -501,18 +840,52 @@ dildogenerator._initPrintControlsDOM = function( dg_container ) {
  * This (sub) function initializes the mesh controls DOM structure.
  **/
 dildogenerator._initBackgroundSettingsDOM = function( dg_container ) {
-    var background_settings = $( "<div/>",
+    var background_settings_div = $( "<div/>",
 				 { "class" : "register_card",
 				   "id"    : "background_settings",
 				   "style" : "display: none;"
-				 } ).append( $( "<h3/>").text( _DILDOGEN_LANG.get(["register_card","background_settings","_heading"],"Background Settings") ) ).
-	append( $( "<table/>",
-		   { "style"  : "border: 0;" }
-		 ) 
-	      );
-    // TODO
+				 } ).append( $( "<h3/>").text( _DILDOGEN_LANG.get(["register_card","background_settings","_heading"],"Background Settings") ) );
+
+
+    /* Create row 1: default background */
+    var row1 = background_settings_div.append( $( "<div/>",
+						  { "class" : "row" }
+						) );
+    row1.append( $( "<div/>",
+		    { "class" : "col-1",
+		      "html"  : "<input type=\"radio\" name=\"bezier_background_type\" id=\"bezier_background_default\" value=\"default\" onchange=\"changeBezierBackgroundType();\" checked=\"checked\" /></td>" +
+		                "<td colspan=\"2\"><label for=\"bezier_background_default\">Default</label>" 
+		    }
+		  )
+	       );
+    row1.append( $( "<div/>",
+		    { "class" : "col-2",
+		      "html"  : ""
+		    }
+		  )
+	       );
+
+    /* Create row 2: image background */
+    var row2 = background_settings_div.append( $( "<div/>",
+						  { "class" : "row" }
+						) );
+    row2.append( $( "<div/>",
+		    { "class" : "col-1",
+		      "html"  : "<input type=\"radio\" name=\"bezier_background_type\" value=\"file\" onchange=\"changeBezierBackgroundType();\" />" +
+		      "<label for=\"bezier_background_file\">File*:</label> " 
+		    }
+		  )
+	       );
+    row2.append( $( "<div/>",
+		    { "class" : "col-2",
+		      "html"  : "<input type=\"file\" id=\"bezier_background_file\" name=\"bezier_background_file\" accept=\"image/*\" onchange=\"loadBezierBackground();\" style=\"width: 330px;\" />" +
+	"<br/> " +
+	"<span style=\"font-size: 7pt; color: #686868;\">* this site will not store nor keep background images you upload, except you <i>explicitly</i> publish them via the Model&rarr;Publish menu.</span>"
+		    }
+		  )
+	       );
     
-    dg_container.append( background_settings );
+    dg_container.append( background_settings_div );
 };
 
 
@@ -524,13 +897,99 @@ dildogenerator._initColorSettingsDOM = function( dg_container ) {
 				 { "class" : "register_card",
 				   "id"    : "color_settings",
 				   "style" : "display: none;"
-				 } ).append( $( "<h3/>").text( _DILDOGEN_LANG.get(["register_card","color_settings","_heading"],"Color") ) ).
-	append( $( "<table/>",
-		   { "style"  : "border: 0;" }
-		 ) 
-	      );
-    // TODO
+				 } ).append( $( "<h3/>").text( _DILDOGEN_LANG.get(["register_card","color_settings","_heading"],"Color") ) );
     
+    color_settings.append( $( "<script/>",
+			      { "html"  : "    function changeColor( c ) {\n" +
+				          "          document.forms[\"color_form\"].elements[\"color\"].value = c;\n" +
+				          "          // Convert color string to R-G-B values  \n" +
+				          "          previewCanvasHandler.setMaterialColorRGB( c,\n" +
+				          "                                                    true // redraw \n" +
+				          "                                                    )\n;" + 
+				          "    \n" +
+				          "    }\n" 
+			      }
+			    )
+			   );
+
+    color_settings.append( $( "<div/>",
+			      { "html"  : "  <form name=\"color_form\">" +
+				          "    <input type=\"hidden\" name=\"color\" value=\"#2c8aff\" />" +
+			          	  "  </form>"
+			      }
+			    )
+			 );
+  
+    // Populate color table
+    var table = color_settings.append( $( "</table>",
+					  { "style"  : "border: 0;" }
+					)
+				     );
+    var colorMatrix = [
+	// First row
+	[ "ffffff", 
+	       "",
+	       "",
+	       "",
+	       "",
+	       "151D28"
+	     ],
+	
+	// Second row
+	[ "2C8Aff", 
+	       "",
+	       "",
+	       "",
+	       "",
+	       "ff60d4"
+	     ], 
+
+	// Third row
+	[ "e00000", 
+	       "f08900",
+	       "f8f000",
+	       "00c000",
+	       "0040e0",
+	       "a000a0"
+	     ]
+    ];
+    
+    for( var y = 0; y < colorMatrix.length; y++ ) {
+	var row = table.append( $( "<tr>" ) );
+	for( var x = 0; x < colorMatrix[y].length; x++ ) {
+	    var color =  colorMatrix[y][x];
+	    if( typeof color != "undefined" ) {
+		row.append( $( "<td/>",
+			       { "class"  : "color_cell" }
+			     ).append( $( "<div/>",
+					  { "class"   : "color_picker",
+					    "style"   : "background-color: #" + color + ";",
+					    "onclick" : "changeColor('#" + color + "');",
+					    "html"    : "&nbsp;"
+					  }
+					)
+				     )
+			  );
+	    } else {
+		row.append( $( "<td/>",
+			       { "html"  : "&nbsp;" }
+			     )
+			  );
+	    }
+	}
+    }
+
+    
+    if( isDildoGeneratorDomain() ) {
+	color_settings.append( $( "<div/>",
+				  { "style"  : "font-size: 7pt; text-align: right; color: #686868;",
+				    "html"   : "Please note that not all of these colors are available in silicone."   
+				  }
+				)
+			     );
+    }
+
+
     dg_container.append( color_settings );
 };
 
