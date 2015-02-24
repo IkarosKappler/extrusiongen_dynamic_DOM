@@ -97,6 +97,8 @@ dildogenerator.initDOM = function() {
     dildogenerator._initInformationalDOM( dg_container );
     dildogenerator._initLicenseDOM( dg_container );
     dildogenerator._initStatusbarDOM( dg_container );
+    dildogenerator._initPreviewControlsDOM( dg_container );
+    dildogenerator._initBezierControlsDOM( dg_container );
 
     dildogenerator._initCanvasComponentsDOM( dg_container );
 };
@@ -606,7 +608,7 @@ dildogenerator._initPrintControlsDOM = function( dg_container ) {
 					  ) );
     row3.append( $( "<div/>",
 		    { "class" : "col-1",
-		      "html"  : "Hull:" 
+		      "html"  : "Hull:" 		    
 		    }
 		  )
 	       );
@@ -1007,6 +1009,141 @@ dildogenerator._initStatusbarDOM = function( dg_container ) {
     
     dg_container.append( status_bar );
 };
+
+
+
+/**
+ * This (sub) function initializes the preview controls DOM structure.
+ **/
+dildogenerator._initPreviewControlsDOM = function( dg_container ) {
+
+    var preview_controls = $( "<div/>",
+			      {   "id"       : "preview_controls",
+				  "style"    : "position: absolute; left: 132px; top: 668px; width: 256px; text-align: right; height: 100px;"
+				  
+			      } 
+			    );
+    preview_controls.append( $( "<span/>" ).text( "Zoom" ) );
+    preview_controls.append( $( "<button/>", 
+				{ "onclick"  : "decreaseZoomFactor(true);" }
+			      ).text( "-" )
+			   );
+    preview_controls.append( $( "<button/>", 
+				{ "onclick"  : "increaseZoomFactor(true);" }
+			      ).text( "+" )
+			   );
+    
+    dg_container.append( preview_controls );
+};
+
+
+
+/**
+ * This (sub) function initializes the bezier controls DOM structure.
+ **/
+dildogenerator._initBezierControlsDOM = function( dg_container ) {
+
+    var bezier_controls = $( "<div/>",
+			      {   "id"       : "bezier_controls",
+				  "style"    : "position: absolute; top: 668px; left: 420px; width: 256px;"
+				  
+			      } 
+			    );
+    var table     = null;
+    var first_row = null;
+    bezier_controls.append( table = $( "<table/>",
+				       { "border"  : "1",
+					 "width"   : "400px"
+				       }
+				     )
+			  );
+    table.append( (first_row = $( "<tr/>" )).append( $( "<td/>" ).append( 
+	$( "<form/>",
+	   { "name"   : "bezier_form" }
+	 ).append( $( "<input/>",
+		      { "type"     : "checkbox",
+			"id"       : "draw_perpendiculars",
+			"name"     : "draw_perpendiculars",
+			"onchane"  : "bezierCanvasHandler.redraw();",
+			"class"    : "tooptip",
+			"title"    : "Draws a perpendicular hull that shows how the material thickness must be calculated."
+		      }
+		    ) 
+		 ).append( $( "<label/>",
+			      { "for"  : "draw_perpendiculars" }
+			    ).text( "Draw perpendiculars" )
+			 ).
+	    append( $( "<br/>" ) ) .    
+	    append( $( "<input/>",
+		       { "type"     : "checkbox",
+			 "id"       : "draw_rulers",
+			 "name"     : "draw_rulers",
+			 "onchane"  : "bezierCanvasHandler.redraw();",
+			 "class"    : "tooptip",
+			 "title"    : "Check if rulers should be painted.",
+			 "checked"  : "checked"
+		       }
+		     ) 
+		 ).append( $( "<label/>",
+			      { "for"  : "draw_rulers" }
+			    ).text( "Draw rulers" )
+			 ).
+	    append( $( "<br/>" ) ) .    
+	    append( $( "<input/>",
+		       { "type"     : "checkbox",
+			 "id"       : "draw_bounding_box",
+			 "name"     : "draw_bounding_box",
+			 "onchane"  : "bezierCanvasHandler.redraw();",
+			 "class"    : "tooptip",
+			 "title"    : "The curve's bounding box is the minimal rectangular area around the bezier path that encloses the path itself.",
+			 "checked"  : "checked"
+		       }
+		     ) 
+		 ).append( $( "<label/>",
+			      { "for"  : "draw_bounding_box" }
+			    ).text( "Draw bounding box" )
+			 )
+    )
+				       ) );
+
+    first_row.append( $( "<td/>" ).
+		      append( $( "<span/>" ).text( "Zoom" ) ).
+		      append( $( "<button/>",
+				 { "onclick"  : "bezierCanvasHandler.decreaseZoomFactor(true);",
+				   "class"    : "zoom_button"
+				 }
+			       ).text( "-" )
+			    ).
+		      append(  $( "<button/>",
+				 { "onclick"  : "bezierCanvasHandler.increaseZoomFactor(true);",
+				   "class"    : "zoom_button"
+				 }
+			       ).text( "+" )
+			    ).
+		      append(  $( "<button/>",
+				 { "onclick"  : "acquireOptimalBezierView();",
+				   "class"    : "zoom_button"
+				 }
+			       ).html( "&#10530;" )
+			    ).
+		      append( $( "<br/>" ) ).
+		      append( $( "<span/>" ).text( "Size" ) ).
+		      append( $( "<button/>",
+				 { "onclick"  : "bezierCanvasHandler.scaleBezierPathUniform(1.05);" }
+			       ).text( "+5%" )
+			    ).
+		      append( $( "<button/>",
+				 { "onclick"  : "bezierCanvasHandler.scaleBezierPathUniform(1.0/1.05);" }
+			       ).text( "-5%" )
+			      
+			     ).
+		      append( $( "<br/>" ) )
+		      );
+    
+    
+    dg_container.append( bezier_controls );
+};
+
 
 
 /**
